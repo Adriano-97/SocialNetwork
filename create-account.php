@@ -7,9 +7,39 @@ if (isset($_POST['createaccount'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $email = $_POST['email'];
+    if(!DB::query('SELECT username FROM users WHERE username = :username', array(':username' => $username))) {
 
-    DB::query('INSERT INTO users VALUES (\'\', :username, :password, :email)', array('username' =>$username, 'password' => $password, 'email' =>$email));
-    echo "Succes";
+      if(strlen($username) >=3 && strlen($username) <=32) {
+
+        if(preg_match('/[a-zA-Z0-9_]+/', $username)) {
+
+          if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+            if(!DB::query('SELECT email FROM users WHERE email = :email', array(':email' => $email ))) {
+
+              if(strlen($password) >= 6 && strlen($password) <= 60) {
+
+                DB::query('INSERT INTO users VALUES (\'\', :username, :password, :email)', array(':username' =>$username, ':password' => password_hash($password, PASSWORD_BCRYPT), ':email' =>$email));
+                echo "Success";
+              } else {
+                echo "Invalid password";
+              }
+            } else {
+              echo "Email was already registered";
+            }
+          } else {
+            echo "Invalid email";
+          }
+        } else {
+            echo "Invalid Username";
+        }
+      } else {
+          echo "Invalid Username";
+      }
+
+    } else {
+      echo "Username already taken.";
+    }
 }
 
  ?>
