@@ -8,8 +8,11 @@ class DB {
       public static function query($query, $params =array()) {
         $statament = self::connect()->prepare($query);
         $statament->execute($params);
-        //$data = $statament->fetchAll();
-        //return $data;
+        if (explode(' ', $query)[0] == 'SELECT'){
+
+          $data = $statament->fetchAll();
+          return $data;
+        }
       }
 }
 ?>
