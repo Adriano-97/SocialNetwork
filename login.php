@@ -13,10 +13,13 @@ if (isset($_POST['login'])) {
               $token = bin2hex(openssl_random_pseudo_bytes(64, $cstrong));
               $user_id = DB::query('SELECT idusers FROM users WHERE username = :username', array(':username' => $username))[0]['idusers'];
               $one_week = 604804;
+              $three_days = 259200;
               echo $token;
               DB::query('INSERT INTO login_tokens VALUES (NULL, :user_id, :token)', array(':user_id'=> $user_id, ':token'=> sha1($token)));
 
               setcookie("SPID", $token, time() + $one_week, '/', NULL, NULL, TRUE );
+              setcookie("SPID_", '1', time() + $three_days, '/', NULL, NULL, TRUE );
+              
             } else {
               echo "Incorrect password";
             }
