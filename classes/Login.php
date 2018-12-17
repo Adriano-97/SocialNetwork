@@ -4,10 +4,9 @@ class Login {
 
   public static function isLoggedIn() {
       error_reporting (E_ALL ^ E_NOTICE);
+      $user_id = DB::query('SELECT user_id FROM login_tokens WHERE token = :token', array(':token' => sha1($_COOKIE['SPID'])))[0]['user_id'];
 
-      if(DB::query('SELECT user_id FROM login_tokens WHERE token = :token', array(':token' => sha1($_COOKIE['SPID'] )))){
-        $user_id = DB::query('SELECT user_id FROM login_tokens WHERE token = :token', array(':token' => sha1($_COOKIE['SPID'])))[0]['user_id'];
-
+      if($user_id != False){
         if(isset($_COOKIE['SPID_'])){
 
           return $user_id;

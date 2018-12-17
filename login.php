@@ -31,7 +31,7 @@ if (isset($_POST['login'])) {
         }
 }
  ?>
-
+ 
 <h1>Loging to your account </h1>
 <form action= "login.php" method= "post">
 <input type="text"  name="username" value="" placeholder="Username...."><p/>

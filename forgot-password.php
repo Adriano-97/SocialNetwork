@@ -7,15 +7,13 @@ if  (isset($_POST['submit'])) {
     $cstrong = True;
     $email= $_POST['email'];
     $token = bin2hex(openssl_random_pseudo_bytes(42, $cstrong));
+    $user_id = DB::query('SELECT idusers FROM users WHERE email = :email', array(':email' => $email))[0]['idusers'];
 
-    if(DB::query('SELECT idusers FROM users WHERE email = :email', array(':email' => $email))[0]['idusers']){
-      $user_id = DB::query('SELECT idusers FROM users WHERE email = :email', array(':email' => $email))[0]['idusers'];
+    if($user_id != False){
       DB::query('INSERT INTO password_tokens VALUES(NULL, :token, :user_id)', array('token'=> sha1($token), ':user_id' => $user_id));
       echo "Email sent";
       echo '</br>';
       echo $token;
-      echo '</br>';
-      echo sha1($token);
     } else {
         echo "Not a valid email";
     }
