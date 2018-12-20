@@ -48,6 +48,23 @@ if(isset($_GET['userprofile'])){
         }
       }
     }
+
+    if(isset($_POST['post'])) {
+        $postbody = $_POST['postbody'];
+        $userid = Login::isLoggedIn();
+
+        if(strlen($postbody) > 160 || strlen($postbody) < 1) {
+          die('Incorrect Lenght');
+        }
+        DB::query('INSERT INTO  posts VALUES(NULL, :postbody, NOW(), :user_id, \'0\')', array(':postbody'=> $postbody, ':user_id' => $user_id));
+
+    }
+
+    $dbposts = DB::query('SELECT * FROM posts WHERE user_id = :userid ORDER BY id DESC',array(':userid' => $user_id));
+    foreach ($dbposts as $p) {
+       $posts .= $p['body']."</br /><hr>";
+    }
+
   } else {
     die('User not found');
   }
@@ -58,7 +75,7 @@ if(isset($_GET['userprofile'])){
 
 
 ?>
-<h1> <?php echo $userProfile; ?>'s Profile<h1>
+<h1> <?php echo $userProfile; ?>'s Profile</h1>
   <form action="profile.php?userprofile=<?php echo $userProfile; ?>" method="post">
     <?php
       if (!($user_id == $follower_id)) {
@@ -70,3 +87,12 @@ if(isset($_GET['userprofile'])){
       }
     ?>
   </form>
+
+  <form action="profile.php?userprofile=<?php echo $userProfile; ?>" method="post">
+    <textarea name="postbody" rows="8" cols="80"> </textarea>
+    <input type="submit" name="post" value = "Post" >
+  </form>
+
+  <div class="posts">
+      <?php  echo $posts;?>
+  </div>
