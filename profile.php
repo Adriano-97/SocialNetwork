@@ -1,7 +1,7 @@
 <?php
 include ("classes/DB.php");
 include ("classes/Login.php");
-
+include ("classes/Post.php");
 $userProfile = '';
 if(isset($_GET['userprofile'])){
 
@@ -51,49 +51,14 @@ if(isset($_GET['userprofile'])){
     }
 
     if(isset($_POST['post'])) {
-        $postbody = $_POST['postbody'];
-
-
-        if(strlen($postbody) > 160 || strlen($postbody) < 1) {
-          die('Incorrect Lenght');
-        }
-        DB::query('INSERT INTO  posts VALUES(NULL, :postbody, NOW(), :user_id, \'0\')', array(':postbody'=> $postbody, ':user_id' => $follower_id));
-
+      Post::createPost($_POST['postbody'], $follower_id);
     }
 
     if(isset($_GET['postid'])){
-      if(!DB::query('SELECT user_id FROM post_likes WHERE post_id =:post_id AND user_id = :user_id ', array(':post_id' =>$_GET['postid'],':user_id' =>$follower_id ))) {
-
-        DB::query('UPDATE posts SET likes = likes + 1 WHERE id =:postid', array (':postid'=> $_GET['postid']));
-        DB::query('INSERT INTO post_likes VALUES(NULL,:post_id, :user_id )', array(':post_id' =>$_GET['postid'], ':user_id' =>$follower_id ));
-
-      } else {
-
-        DB::query('UPDATE posts SET likes = likes - 1 WHERE id =:postid', array (':postid'=> $_GET['postid']));
-        DB::query('DELETE FROM post_likes WHERE post_id =:post_id AND user_id = :user_id ', array(':post_id' =>$_GET['postid'], ':user_id' =>$follower_id ));
-
-      }
+        Post::likingPost($_GET['postid'], $follower_id);
     }
 
-    $dbposts = DB::query('SELECT * FROM posts WHERE user_id = :userid ORDER BY id DESC',array(':userid' => $user_id));
-    foreach ($dbposts as $p) {
-
-       if(!DB::query('SELECT post_id FROM post_likes WHERE post_id =:post_id AND user_id = :user_id ', array(':post_id' =>$p['id'],':user_id' =>$follower_id ))) {
-         $posts .= htmlspecialchars($p['body'])."
-                    <form action= 'profile.php?userprofile=$userProfile&postid=".$p['id']."' method='post'>
-                          <input type= 'submit' name= 'like' value= 'Like'>
-                          <span>".$p['likes']." likes </span>
-                      </form>
-                    </br /><hr>";
-      } else {
-        $posts .= htmlspecialchars($p['body'])."
-                   <form action= 'profile.php?userprofile=$userProfile&postid=".$p['id']."' method='post'>
-                         <input type= 'submit' name= 'unlike' value= 'Unlike'>
-                         <span>".$p['likes']." likes </span>
-                     </form>
-                   </br /><hr>";
-      }
-    }
+$posts = Post::postForm($user_id, $userProfile, $follower_id);
 
   } else {
     die('User not found');
