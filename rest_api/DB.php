@@ -11,13 +11,21 @@ class DB {
 
       }
       public  function query($query, $params =array()) {
-        $statament = $this->pdo->prepare($query);
-        $statament->execute($params);
+        try{
+          $statament = $this->pdo->prepare($query);
+          $statament->execute($params);
 
-        if (explode(' ', $query)[0] == 'SELECT'){
-          $data = $statament->fetchAll();
-          return $data;
+          if (explode(' ', $query)[0] == 'SELECT'){
+            $data = $statament->fetchAll();
+            return $data;
+          }   else {
+
+            return True;
+          }
+        } catch(Exception  $e) {
+            return False;
         }
+
       }
 }
 ?>

@@ -1,2 +1,4 @@
 RewriteEngine On
+php_value upload_max_filesize 5M
+php_value post_max_size 6M
 RewriteRule ^([^/]+)/? index.php?url=$1 [L,QSA]

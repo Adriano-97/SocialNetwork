@@ -46,7 +46,7 @@ if($showTimeline != False){
       echo   "<form action= 'index.php?postidtome={$post['id']}' method='post'>
                 <textarea name='commentBody' rows='6' cols='40'> </textarea>
                 <input type='submit' name='comment' value = 'Post comment' >
-              </form>";
+                </form>";
               Comments::showComment($post['id']);
       echo    "</br /><hr>";
 

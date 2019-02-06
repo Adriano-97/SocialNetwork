@@ -15,7 +15,7 @@ if (isset($_POST['login'])) {
               echo "Logged in";
 
               $token = bin2hex(openssl_random_pseudo_bytes(64, $cstrong));
-              $user_id = DB::query('SELECT idusers FROM users WHERE username = :username', array(':username' => $username))[0]['idusers'];
+              $user_id = DB::query('SELECT id FROM users WHERE username = :username', array(':username' => $username))[0]['id'];
 
               echo $token;
               DB::query('INSERT INTO login_tokens VALUES (NULL, :user_id, :token)', array(':user_id'=> $user_id, ':token'=> sha1($token)));
